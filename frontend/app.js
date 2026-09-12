@@ -1,5 +1,5 @@
 // IMPORTANT: change this to your actual Render URL after deploying the backend.
-const API_BASE_URL = "https://your-app-name.onrender.com";
+const API_BASE_URL = "https://multi-agent-app-prbk.onrender.com";
 
 let currentReviewId = null;
 
