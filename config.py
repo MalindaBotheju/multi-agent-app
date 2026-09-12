@@ -28,6 +28,8 @@ MAX_HUMAN_REJECTIONS = 2    # how many times the pipeline retries after a human 
 MAX_LLM_RETRIES = 3                # how many times to retry a single call after a 429
 LLM_RETRY_BASE_DELAY_SECONDS = 5   # fallback wait if Groq doesn't tell us how long
 MAX_LLM_OUTPUT_TOKENS = 800        # caps each response's length, reducing token usage per call
+MAX_WRITER_OUTPUT_TOKENS = 2000    # the Writer's full report needs more room than other agents —
+                                    # 800 was cutting reports off mid-table (broken markdown)
 
 if not GROQ_API_KEY:
     raise RuntimeError(

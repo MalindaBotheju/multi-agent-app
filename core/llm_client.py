@@ -37,7 +37,16 @@ def _seconds_to_wait(error: RateLimitError, attempt: int) -> float:
     return config.LLM_RETRY_BASE_DELAY_SECONDS * (attempt + 1)
 
 
-def call_llm(system_prompt: str, user_prompt: str) -> str:
+def call_llm(system_prompt: str, user_prompt: str, max_tokens: int = None) -> str:
+    """
+    max_tokens defaults to config.MAX_LLM_OUTPUT_TOKENS. Pass a higher value
+    for calls that genuinely need more room (e.g. the Writer's full report)
+    without raising the cap — and therefore the token cost — for every
+    other, shorter agent call.
+    """
+    if max_tokens is None:
+        max_tokens = config.MAX_LLM_OUTPUT_TOKENS
+
     last_error = None
 
     for attempt in range(config.MAX_LLM_RETRIES + 1):
@@ -49,7 +58,7 @@ def call_llm(system_prompt: str, user_prompt: str) -> str:
                     {"role": "user", "content": user_prompt},
                 ],
                 temperature=0.3,
-                max_tokens=config.MAX_LLM_OUTPUT_TOKENS,
+                max_tokens=max_tokens,
             )
             return response.choices[0].message.content
 

@@ -3,6 +3,7 @@ AGENT: Writer
 Job: turn validated research into a final report.
 """
 
+import config
 from core.llm_client import call_llm
 
 
@@ -10,6 +11,13 @@ def writer_agent(research_notes: str, validation_issues: str, extra_feedback: st
     system_prompt = (
         "You are a Writer Agent. Write a clear, well-structured report using "
         "the research notes provided.\n\n"
+        "FORMATTING: use standard Markdown only. For any source link, use "
+        "normal Markdown link syntax like [source name](https://example.com) "
+        "— never wrap URLs in special bracket characters such as 【 】 or any "
+        "other non-standard punctuation; those don't render as clickable "
+        "links and show up as broken text. Keep tables short enough to "
+        "finish completely — an unfinished table is worse than a shorter, "
+        "complete one.\n\n"
         "CRITICAL RULE ON NUMBERS: the validation notes may include a "
         "'VERIFIED FINANCIALS' section with real data (revenue, net income, "
         "EPS, margin) from Yahoo Finance. Where a verified figure exists for "
@@ -35,4 +43,4 @@ def writer_agent(research_notes: str, validation_issues: str, extra_feedback: st
     )
     if extra_feedback:
         combined_input += f"\n\nFEEDBACK TO ADDRESS:\n{extra_feedback}"
-    return call_llm(system_prompt, combined_input)
+    return call_llm(system_prompt, combined_input, max_tokens=config.MAX_WRITER_OUTPUT_TOKENS)
