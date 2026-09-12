@@ -54,3 +54,32 @@ def extract_tickers(research_notes: str) -> list[str]:
                 return []
             return [t.strip().upper() for t in raw.split(",") if t.strip()]
     return []
+
+
+def resolve_ticker_from_request(user_request: str) -> list[str]:
+    """
+    Identifies the primary stock ticker directly from the user's original
+    question (e.g. "Tesla" -> "TSLA"), independent of whether web search
+    found anything. This matters because extract_tickers() only sees
+    tickers that happen to show up in the research notes — if search fails
+    or comes back empty, notes-based extraction finds nothing even for a
+    company as well-known as Tesla, and the pipeline never fetches real
+    verified financials at all. This is a separate, cheap LLM call that
+    doesn't depend on search succeeding.
+    """
+    system_prompt = (
+        "You identify stock ticker symbols. Given a user's request, reply "
+        "with ONLY the single most relevant public company's ticker symbol "
+        "in capital letters (e.g. 'TSLA' for Tesla, 'NVDA' for NVIDIA) if "
+        "the request is clearly about one specific publicly traded company. "
+        "Reply with exactly 'NONE' if no specific public company is "
+        "identifiable, or if multiple unrelated companies are mentioned. "
+        "No explanation, no punctuation, no extra words."
+    )
+    result = call_llm(system_prompt, user_request, max_tokens=10).strip().upper()
+
+    # Basic sanity check: real tickers are short, alphabetic (maybe a dot)
+    cleaned = result.replace(".", "")
+    if result == "NONE" or not result or len(result) > 6 or not cleaned.isalpha():
+        return []
+    return [result]

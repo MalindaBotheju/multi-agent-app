@@ -52,7 +52,7 @@ def run_until_human_review(user_request: str) -> dict:
 
     research_notes = researcher_agent(plan)
 
-    issues = validator_agent(research_notes)
+    issues = validator_agent(research_notes, user_request)
     print(f"[Validator] issues: {issues[:200]!r}")
 
     report = _run_quality_loop(research_notes, issues)
@@ -86,7 +86,7 @@ def resume_after_human_decision(state: dict, reason: str, comment: str) -> dict:
     if reason == "research":
         # Bad research -> go all the way back to the Researcher
         state["research_notes"] = researcher_agent(state["plan"], extra_instructions=comment)
-        state["issues"] = validator_agent(state["research_notes"])
+        state["issues"] = validator_agent(state["research_notes"], state["user_request"])
         print(f"[Validator] issues: {state['issues'][:200]!r}")
         state["report"] = _run_quality_loop(state["research_notes"], state["issues"])
     else:

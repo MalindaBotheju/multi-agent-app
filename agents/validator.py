@@ -15,11 +15,18 @@ Three layers, not just one:
 
 from core.llm_client import call_llm
 from core.finance import check_tickers, get_key_financials_for_tickers
-from agents.researcher import extract_tickers
+from agents.researcher import extract_tickers, resolve_ticker_from_request
 
 
-def validator_agent(research_notes: str) -> str:
-    tickers = extract_tickers(research_notes)
+def validator_agent(research_notes: str, user_request: str = "") -> str:
+    # Combine tickers found two ways: mentioned in the research notes, AND
+    # resolved directly from the user's question. The second one matters
+    # because if web search fails or comes back empty, notes-based
+    # extraction finds nothing — even for a company as well-known as
+    # Tesla — and real financials never get fetched at all.
+    tickers_from_notes = extract_tickers(research_notes)
+    tickers_from_request = resolve_ticker_from_request(user_request) if user_request else []
+    tickers = list(dict.fromkeys(tickers_from_notes + tickers_from_request))  # dedupe, keep order
 
     # Real checks first
     ticker_check_results = check_tickers(tickers)
