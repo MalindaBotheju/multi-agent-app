@@ -4,20 +4,52 @@
   <meta charset="UTF-8">
   <title>Multi-Agent Research Pipeline</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; }
-    textarea, input { width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box; }
-    button { padding: 8px 16px; margin: 4px 4px 4px 0; cursor: pointer; }
-    #report {
-      background: #f5f5f5; padding: 16px 24px; border-radius: 6px; margin-top: 16px;
-      line-height: 1.5;
+    :root {
+      --accent: #4f46e5;
+      --border: #e2e2e7;
+      --bg-soft: #f7f7fa;
+      --text-muted: #6b6b76;
     }
-    #report table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.92em; }
-    #report th, #report td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
-    #report th { background: #e8e8e8; }
-    #report h1, #report h2, #report h3 { margin-top: 1.2em; }
-    #report code { background: #e8e8e8; padding: 1px 4px; border-radius: 3px; }
-    #reviewSection, #status { display: none; margin-top: 16px; }
-    label { display: block; margin-top: 8px; }
+    body {
+      font-family: -apple-system, system-ui, sans-serif;
+      max-width: 760px; margin: 48px auto; padding: 0 24px;
+      color: #1c1c22;
+    }
+    h1 { font-size: 1.6em; margin-bottom: 4px; }
+    label { display: block; margin-top: 16px; font-weight: 600; font-size: 0.95em; }
+    textarea, input, select {
+      width: 100%; padding: 10px 12px; margin: 8px 0; box-sizing: border-box;
+      border: 1px solid var(--border); border-radius: 8px; font-size: 1em;
+      font-family: inherit;
+    }
+    textarea:focus, input:focus, select:focus {
+      outline: none; border-color: var(--accent);
+    }
+    button {
+      padding: 10px 20px; margin: 4px 8px 4px 0; cursor: pointer;
+      border: none; border-radius: 8px; font-size: 0.95em; font-weight: 600;
+      background: var(--accent); color: white;
+      transition: opacity 0.15s;
+    }
+    button:hover { opacity: 0.88; }
+    button.secondary { background: white; color: #1c1c22; border: 1px solid var(--border); }
+    #report {
+      background: white; border: 1px solid var(--border);
+      padding: 24px 28px; border-radius: 12px; margin-top: 24px;
+      line-height: 1.6; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    #report table { border-collapse: collapse; width: 100%; margin: 16px 0; font-size: 0.92em; }
+    #report th, #report td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+    #report th { background: var(--bg-soft); font-weight: 600; }
+    #report h1, #report h2, #report h3 { margin-top: 1.3em; margin-bottom: 0.5em; }
+    #report h2 { border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    #report code { background: var(--bg-soft); padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+    #reviewSection { display: none; margin-top: 20px; }
+    #status {
+      display: none; margin-top: 16px; padding: 10px 14px;
+      background: var(--bg-soft); border-radius: 8px;
+      color: var(--text-muted); font-size: 0.9em;
+    }
   </style>
   <!-- Renders the report's markdown (headings, tables, bold) as actual HTML
        instead of dumping raw "## " and "|---|" text into the page. -->
@@ -34,7 +66,7 @@
 
   <div id="reviewSection">
     <button onclick="approve()">Approve</button>
-    <button onclick="showRejectForm()">Reject</button>
+    <button class="secondary" onclick="showRejectForm()">Reject</button>
 
     <div id="rejectForm" style="display:none;">
       <label>Why?</label>
