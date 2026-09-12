@@ -1,0 +1,21 @@
+# Never bake secrets into the image — pass them at runtime instead
+.env
+
+# Python clutter
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Git/editor/OS clutter
+.git/
+.gitignore
+.vscode/
+.DS_Store
+
+# Frontend is deployed separately on Vercel, not needed in the backend image
+frontend/
+
+# Docs not needed inside the container
+README.md

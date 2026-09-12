@@ -1,0 +1,16 @@
+# Secrets — never commit these
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# OS/editor clutter
+.DS_Store
+.vscode/
+
+# Vercel
+frontend/.vercel/
