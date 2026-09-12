@@ -20,9 +20,11 @@ def check_ticker(ticker: str) -> str:
         price = info.get("last_price")
         currency = info.get("currency", "")
         if price is None:
+            print(f"[finance] {ticker}: fast_info returned no last_price — {dict(info)!r}")
             return f"{ticker}: INVALID TICKER or no live data available"
         return f"{ticker}: VERIFIED — current price {price} {currency}"
     except Exception as e:
+        print(f"[finance] {ticker}: check_ticker EXCEPTION: {type(e).__name__}: {e}")
         return f"{ticker}: INVALID TICKER or lookup failed ({e})"
 
 
@@ -50,6 +52,7 @@ def get_key_financials(ticker: str) -> str:
         currency = info.get("currency", "")
 
         if revenue is None and eps is None:
+            print(f"[finance] {ticker}: .info returned {len(info)} keys but no revenue/eps found")
             return f"{ticker}: no verified financial data available from Yahoo Finance."
 
         lines = [f"{ticker} — VERIFIED financial data (Yahoo Finance, trailing twelve months):"]
@@ -63,6 +66,7 @@ def get_key_financials(ticker: str) -> str:
             lines.append(f"  Profit margin: {margin:.1%}")
         return "\n".join(lines)
     except Exception as e:
+        print(f"[finance] {ticker}: get_key_financials EXCEPTION: {type(e).__name__}: {e}")
         return f"{ticker}: financial data lookup failed ({e})"
 
 

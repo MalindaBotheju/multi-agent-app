@@ -27,10 +27,13 @@ def validator_agent(research_notes: str, user_request: str = "") -> str:
     tickers_from_notes = extract_tickers(research_notes)
     tickers_from_request = resolve_ticker_from_request(user_request) if user_request else []
     tickers = list(dict.fromkeys(tickers_from_notes + tickers_from_request))  # dedupe, keep order
+    print(f"[Validator] tickers from notes: {tickers_from_notes}, from request: {tickers_from_request}, combined: {tickers}")
 
     # Real checks first
     ticker_check_results = check_tickers(tickers)
     financials_check_results = get_key_financials_for_tickers(tickers)
+    print(f"[Validator] ticker check result: {ticker_check_results!r}")
+    print(f"[Validator] financials check result: {financials_check_results!r}")
 
     # LLM judgment check second
     system_prompt = (

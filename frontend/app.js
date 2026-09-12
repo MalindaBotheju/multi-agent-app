@@ -6,7 +6,13 @@ let currentReviewId = null;
 // Renders the report's markdown as actual HTML (tables, headings, bold)
 // instead of dumping raw "## " / "|---|" text into the page.
 function renderReport(markdownText) {
-  document.getElementById("report").innerHTML = marked.parse(markdownText);
+  // Some models wrap citation URLs in special bracket characters (【 】)
+  // instead of standard Markdown link syntax, which shows up as broken
+  // text instead of a clickable link. Rather than relying on the model to
+  // always follow formatting instructions, strip those brackets here —
+  // marked.js's GFM autolinking then turns the bare URL into a real link.
+  const cleanedText = markdownText.replace(/[【】]/g, "");
+  document.getElementById("report").innerHTML = marked.parse(cleanedText);
 }
 
 async function runPipeline() {
