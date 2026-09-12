@@ -7,10 +7,21 @@
     body { font-family: system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 0 20px; }
     textarea, input { width: 100%; padding: 8px; margin: 8px 0; box-sizing: border-box; }
     button { padding: 8px 16px; margin: 4px 4px 4px 0; cursor: pointer; }
-    #report { white-space: pre-wrap; background: #f5f5f5; padding: 16px; border-radius: 6px; margin-top: 16px; }
+    #report {
+      background: #f5f5f5; padding: 16px 24px; border-radius: 6px; margin-top: 16px;
+      line-height: 1.5;
+    }
+    #report table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.92em; }
+    #report th, #report td { border: 1px solid #ccc; padding: 6px 10px; text-align: left; }
+    #report th { background: #e8e8e8; }
+    #report h1, #report h2, #report h3 { margin-top: 1.2em; }
+    #report code { background: #e8e8e8; padding: 1px 4px; border-radius: 3px; }
     #reviewSection, #status { display: none; margin-top: 16px; }
     label { display: block; margin-top: 8px; }
   </style>
+  <!-- Renders the report's markdown (headings, tables, bold) as actual HTML
+       instead of dumping raw "## " and "|---|" text into the page. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.0/marked.min.js"></script>
 </head>
 <body>
   <h1>Multi-Agent Research Pipeline</h1>

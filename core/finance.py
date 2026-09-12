@@ -31,3 +31,43 @@ def check_tickers(tickers: list[str]) -> str:
     if not tickers:
         return "No tickers were mentioned to check."
     return "\n".join(check_ticker(t) for t in tickers)
+
+
+def get_key_financials(ticker: str) -> str:
+    """
+    Pulls real trailing-twelve-month financials (revenue, net income, EPS,
+    profit margin) straight from Yahoo Finance — not from web search
+    snippets. This is what the Researcher's numbers should be checked
+    against, and what the Writer should actually put in the report instead
+    of unverified figures pulled from search results.
+    """
+    try:
+        info = yf.Ticker(ticker).info
+        revenue = info.get("totalRevenue")
+        net_income = info.get("netIncomeToCommon")
+        eps = info.get("trailingEps")
+        margin = info.get("profitMargins")
+        currency = info.get("currency", "")
+
+        if revenue is None and eps is None:
+            return f"{ticker}: no verified financial data available from Yahoo Finance."
+
+        lines = [f"{ticker} — VERIFIED financial data (Yahoo Finance, trailing twelve months):"]
+        if revenue is not None:
+            lines.append(f"  Revenue (TTM): {revenue:,} {currency}")
+        if net_income is not None:
+            lines.append(f"  Net income (TTM): {net_income:,} {currency}")
+        if eps is not None:
+            lines.append(f"  EPS (trailing): {eps}")
+        if margin is not None:
+            lines.append(f"  Profit margin: {margin:.1%}")
+        return "\n".join(lines)
+    except Exception as e:
+        return f"{ticker}: financial data lookup failed ({e})"
+
+
+def get_key_financials_for_tickers(tickers: list[str]) -> str:
+    """Runs get_key_financials for a list of tickers."""
+    if not tickers:
+        return "No tickers were mentioned, so no financial data was verified."
+    return "\n\n".join(get_key_financials(t) for t in tickers)

@@ -1,14 +1,20 @@
 // IMPORTANT: change this to your actual Render URL after deploying the backend.
-const API_BASE_URL = "https://multi-agent-app-prbk.onrender.com";
+const API_BASE_URL = "https://your-app-name.onrender.com";
 
 let currentReviewId = null;
+
+// Renders the report's markdown as actual HTML (tables, headings, bold)
+// instead of dumping raw "## " / "|---|" text into the page.
+function renderReport(markdownText) {
+  document.getElementById("report").innerHTML = marked.parse(markdownText);
+}
 
 async function runPipeline() {
   const question = document.getElementById("question").value.trim();
   if (!question) return;
 
   setStatus("Running the pipeline... this can take a minute.");
-  document.getElementById("report").textContent = "";
+  document.getElementById("report").innerHTML = "";
   document.getElementById("reviewSection").style.display = "none";
 
   const res = await fetch(`${API_BASE_URL}/pipeline/run`, {
@@ -24,7 +30,7 @@ async function runPipeline() {
 
   const data = await res.json();
   currentReviewId = data.review_id;
-  document.getElementById("report").textContent = data.report;
+  renderReport(data.report);
   document.getElementById("reviewSection").style.display = "block";
   setStatus("");
 }
@@ -67,7 +73,7 @@ async function submitDecision(body) {
   } else {
     // Another round: new report to review
     currentReviewId = data.review_id;
-    document.getElementById("report").textContent = data.report;
+    renderReport(data.report);
     document.getElementById("rejectForm").style.display = "none";
     setStatus(`Revised report ready (rejection ${data.rejections_so_far} so far).`);
   }
